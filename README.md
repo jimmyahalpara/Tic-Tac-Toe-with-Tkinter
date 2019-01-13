@@ -2,10 +2,12 @@
 Tic tac toe with fantastic gui made with **Tkinter**. Really good example for learning **Tkinter** with **Python**. If you can't figureout anything you can contact *jimmyahalpara123@gmail.com*
 
 
+
 # Tic Tac Toe
 
 Hello, Guys in this notebook I'll be explaining you step by step the makeing of my tic-tac-toe game which is made using python and tkinter. So Lets get started by importing some important modules.
 I recommend that you first play the game, know its all features and then continue reading this notebook. 
+Some initial knowledge of tkinter is required!!!
 
 
 ```python
@@ -28,7 +30,7 @@ Now Let's see Class named Maingamemodule which will help for running the game an
 class Maingamemodule:
     
     #this method will be executed when we initializes or we can say create the object for the class
-    
+    #this method will initialize all the required variable and other data
     def __init__(self):
         #this codeblock below will check if fill named "highscore.dtt" is present or not, if not then upper "try" codeblock will be terminated and "except" codeblock will be executed which will create highscore.dtt file.
         #this two codeblock generally will check if previous and data is available for the high score, if not then it creates new empty data
@@ -39,66 +41,69 @@ class Maingamemodule:
             s=open('highscore.dtt','wb+')
             pickle.dump(['',0,''],s) #in that file data is saved in form of list where at index 0, index 2 will have player 1 name, player name 2 respectively which will be string and in index 1 there will be the highscore in form of integer, which will be of player with player name 1
             s.close()
-        self.history=[]
-        self.position={1:' ',2:' ',3:' ',4:' ',5:' ',6:' ',7:' ',8:' ',9:' '}
-        self.panelhistory=''
-        self.turn=0
-        self.player1score=0
-        self.player2score=0
-        self.state='off'
-        self.normal_button='SystembuttonFace'
-        self.normal_clickedbutton='grey'
-        self.initial_playpad='pink'
-        self.gamestarted_playpad='green'
-        self.x_playpad='yellow'
-        self.o_playpad='cyan'
-        self.won_playpad='red'
-        self.background='SystemButtonFace'
+        self.history=[] #this will store the history of all the moves made by the players
+        self.position={1:' ',2:' ',3:' ',4:' ',5:' ',6:' ',7:' ',8:' ',9:' '} #stores the tic-tac-toe position
+        self.panelhistory='' #right side panel history will be saved here
+        self.turn=0 #will determine whose turn is this
+        self.player1score=0 #player 1 score
+        self.player2score=0 #player 2 score
+        self.state='off' #is game can be played or paused can be determined by this, is this is off some playing widgets will be disabled
+        self.normal_button='SystembuttonFace' #normal button color
+        self.normal_clickedbutton='grey' #normal clicked butten color
+        self.initial_playpad='pink' #initial playpad color
+        self.gamestarted_playpad='green' #when game starts, pad color will be converted to this
+        self.x_playpad='yellow' #is x clicked, that button will turn to this color
+        self.o_playpad='cyan' #if o clicked, that button will turn to this color
+        self.won_playpad='red' #if anyone won, those group of three buttons will turn into this color
+        self.background='SystemButtonFace' #background color
 
-    def exxit(self):
+    def exxit(self): #game will close
         self.mainwindow.destroy()
         exit()
 
-    def appendpanel(self,s):
-        self.panelhistory+='\n'+s
-        self.textbox.insert('1.0','\n'+s)
-    def returnthebox(self):
+    def appendpanel(self,s): #used if we want to insert data in pane or box on right side which shows gamme history
+        self.panelhistory+='\n'+s #new string will be added to panelhistory
+        self.textbox.insert('1.0','\n'+s) #text box on right will be updated
+        
+    def returnthebox(self): #this method will return a string, if printed will form box containing the tic tac toe at that instance, and can be used when we are goint to update the textbox
         st='+---+---+---+\n| '+self.position[1]+' | '+self.position[2]+' | '+self.position[3]+' |\n+---+---+---+\n| '+self.position[4]+' | '+self.position[5]+' | '+self.position[6]+' |\n+---+---+---+\n| '+self.position[7]+' | '+self.position[8]+' | '+self.position[9]+' |\n+---+---+---+\n'
         self.appendpanel(st)
     
-    def createwindow(self):
-        self.mainwindow=Tk(screenName='Tic-Tac-Toe',baseName='Tic_tac_toe',className='Maingame_menu')
-        self.menubar=Menu(self.mainwindow)
-        self.gamemenu=Menu(self.menubar,tearoff=0)
-        self.gamemenu.add_command(label='New game',command=self.gamerestart)
-        self.gamemenu.add_command(label='Restart Game',command=self.restart)
-        self.gamemenu.add_separator()
-        self.gamemenu.add_command(label='exit',command=self.exxit)
-        self.menubar.add_cascade(label='Game',menu=self.gamemenu)
-        self.historymenu=Menu(self.menubar,tearoff=0)
-        self.historymenu.add_command(label='Show History',command=self.showhistory)
-        self.historymenu.add_command(label='Show Highscore',command=self.showhighscore)
-        self.historymenu.add_command(label='Show Panel History',command=self.showpanel)
-        self.historymenu.entryconfig(0,state=DISABLED)
-        self.historymenu.entryconfig(1,state=DISABLED)
-        self.historymenu.entryconfig(2,state=DISABLED)
-        self.gamemenu.entryconfig(1,state=DISABLED)
-        self.menubar.add_cascade(label='History',menu=self.historymenu)
-        self.helpmenu=Menu(self.menubar,tearoff=0)
+    def createwindow(self): #after __init__ method this method will be executed, this will create the main frame, and insert all its widgets
+        self.mainwindow=Tk(screenName='Tic-Tac-Toe',baseName='Tic_tac_toe',className='Maingame_menu') #create main window object and save it into a variable
+        self.menubar=Menu(self.mainwindow) #creates menubar widget object and save its instance
+        self.gamemenu=Menu(self.menubar,tearoff=0) #creates menu widget object and save its instance, this will be gamemenu
+        self.gamemenu.add_command(label='New game',command=self.gamerestart) #add commands in gamemenu using its instance and add their respective function which will be executed when we cluch that option or command
+        self.gamemenu.add_command(label='Restart Game',command=self.restart) #adding commands
+        self.gamemenu.add_separator() #adding seperator in that menu, that is draw slight line
+        self.gamemenu.add_command(label='exit',command=self.exxit) #adding command for exit
+        self.menubar.add_cascade(label='Game',menu=self.gamemenu) #all the data of gamemenu should be added to menubar
+        self.historymenu=Menu(self.menubar,tearoff=0) #creating historymenu
+        self.historymenu.add_command(label='Show History',command=self.showhistory) #adding commands
+        self.historymenu.add_command(label='Show Highscore',command=self.showhighscore) #adding commands
+        self.historymenu.add_command(label='Show Panel History',command=self.showpanel) #adding commands
+        self.historymenu.entryconfig(0,state=DISABLED) #initial state of some command should be disabled
+        self.historymenu.entryconfig(1,state=DISABLED) #same as above
+        self.historymenu.entryconfig(2,state=DISABLED) #same as above
+        self.gamemenu.entryconfig(1,state=DISABLED) #same as above
+        self.menubar.add_cascade(label='History',menu=self.historymenu) #adding history menu to menubar
+        self.helpmenu=Menu(self.menubar,tearoff=0) 
         self.helpmenu.add_command(label='Info',command=self.printinfo)
         self.helpmenu.add_command(label='Credits',command=self.showcredits)
         self.menubar.add_cascade(label='Help',menu=self.helpmenu)
         self.colormenu=Menu(self.menubar,tearoff=0)
         self.colormenu.add_command(label='Choosecolor',command=self.choosecolor)
         self.menubar.add_cascade(label='Colours',menu=self.colormenu)
-        self.mainwindow.config(menu=self.menubar)
+        self.mainwindow.config(menu=self.menubar) #adding the menubar into mainwindow
         
-        self.frame1=Frame(self.mainwindow,bg=self.background,width=500,height=210)
-        self.frame1.pack(side=LEFT)
-        self.frame2=Frame(self.mainwindow,bg=self.background,width=100,height=210)
-        self.frame2.place(x=320,y=10)
+        #creating two frames left containing game pad and right containing history test box
+        self.frame1=Frame(self.mainwindow,bg=self.background,width=500,height=210) #creating frame widget object and saving its instance
+        self.frame1.pack(side=LEFT) #packing the previous widget
+        self.frame2=Frame(self.mainwindow,bg=self.background,width=100,height=210) #right frame
+        self.frame2.place(x=320,y=10) #place method same as pack but uses coordinates
         
-        Label(self.frame1,text='Player 1 name:').place(x=6,y=5)
+        #add all main widgets for taking player information
+        Label(self.frame1,text='Player 1 name:').place(x=6,y=5) #label for 
         self.player1name=StringVar()
         self.enterplayer1name=Entry(self.frame1,textvariable=self.player1name,width=10)
         self.enterplayer1name.place(x=90,y=5)
@@ -685,6 +690,7 @@ class Maingamemodule:
         self.background='SystemButtonFace'
         self.startchange()
 ```
+
 
 
 
